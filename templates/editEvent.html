@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1> Event bearbeiten</h1>
+{% from "includes/_formhelpers.html" import render_field %}
+<div class="container">
+<form method="POST" action="">
+    <div class="form-group">
+        {{ render_field(form.event, class_="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.eDate, class_="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ render_field(form.eDesc, class_="form-control") }}
+    </div>
+    <div class="form-group">
+            {{ render_field(form.eBg, class_="form-control") }}
+    </div>
+    <div class="form-group">
+            {{ render_field(form.eLogo, class_="form-control") }}
+    </div>
+    <div class="form-group">
+            {{ render_field(form.eShort, class_="form-control") }}
+    </div>
+    
+    <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+</form>
+</div>
+{% endblock %}

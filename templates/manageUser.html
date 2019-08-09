@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+ 
+{% block content %}
+<section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Userverwaltung</h1>
+          <p class="lead text-muted">manage some users</p>
+          <p>
+            <a href="/createUser" class="btn btn-primary my-2">neuer Benutzer</a>
+            
+          </p>
+        </div>
+      </section>
+
+<div class="container">
+    <h2> Aktive User</h2>
+    <table>
+        {% for us in user %}
+        <tr><td><h3>{{ us.username }}</h3></td><td>
+            {% if us.username != session.username %}
+                <form action="{{url_for('deleteUser', id=us.id)}}" method="POST" onsubmit="return confirm('You sure?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Loeschen" class="btn btn-danger">
+                </form> </td><td>
+                <form action="{{url_for('resetUserpw', id=us.id)}}" method="POST" onsubmit="return confirm('You sure?');">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="reset PW" class="btn btn-danger">
+                    </form> 
+            {% else %}
+                <a class="btn btn-danger" href="/changePW ">Passwort aendern</a>
+            {% endif %}
+
+            </td></tr>
+            
+        {% endfor %}
+    </table>
+</div>
+
+
+{% endblock %}

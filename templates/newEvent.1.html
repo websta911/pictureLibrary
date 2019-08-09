@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>Neues Event</h1>
+{% from "includes/_formhelpers.html" import render_field %}
+<div class="container">
+        <form method="POST" action="">
+                <div class="form-group">
+                    
+              <label for="event">Veranstaltung</label>
+              <input class="form-control" id="event" name="event" type="text" value="">
+              
+            
+                </div>
+                <div class="form-group">
+                    
+              <label for="eDate">VeranstaltungsDatum</label>
+              <input class="form-control" id="eDate" name="eDate" type="date" value="">
+              
+            
+                </div>
+                <div class="form-group">
+                    
+              <label for="eDesc">Beschreibung</label>
+              <textarea class="form-control" id="eDesc" name="eDesc"></textarea>
+              
+            
+                </div>
+                <div class="form-group">
+                        
+              <label for="eBg">Hintergrund</label>
+              <select class="form-control" id="eBg" name="eBg">
+                    {% for bgimg in bgImages %}
+                        <option value="{{ bgimg.src }}"><img class="card-img-top" src="../{{ bgimg.src }}">{{ bgimg.name }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+                <div class="form-group">
+                        
+              <label for="eLogo">Logo</label>
+              <select class="form-control" id="eLogo" name="eLogo">
+                    {% for logo in logoImages %}  
+                        <option value="{{ logo.src }}"><img class="card-img-top" src="../{{ logo.src }}">{{ logo.name }} </option>
+                    {% endfor %}
+                </select>
+                </div>
+                <div class="form-group">
+                        
+              <label for="eShort">Kurzform</label>
+              <input class="form-control" id="eShort" name="eShort" type="text" value="">
+              
+            
+                </div>
+                
+                <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+            </form>
+</div>
+
+<!--<script>
+    jQuery(document).ready(function ($) {
+            $("#eBg option").each(function()
+    {
+        $(this).prop('data-image',$(this).html)
+    });
+});
+</script> -->
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+ 
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Uploaded</h1>
+        <img src=" {{url_for('send_image', filename=image_name)}}" class="img-fluid" alt="Responsive image">
+        <p></p>
+
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a href="print/{{image_name}}"><button type="button" class="btn btn-sm btn-outline-secondary">Drucken</button></a>
+            </div>
+            <small class="text-muted"></small>
+        </div>
+                    
+       
+        
+    </div>
+</section>
+
+
+{% endblock %}

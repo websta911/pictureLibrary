@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+<h1>Photobox Konfiguration</h1>
+<form action="" method="post">
+{% for image in images %}
+<div class="col-md-4">
+    <div class="card mb-4 box-shadow">
+        <img class="card-img-top" src="../{{ image.src }}" alt="Card image cap">
+        <div class="card-body">
+        <p class="card-text">{{image.name}}</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+            <a href="setLink/{{image.name}}"><button type="button" class="btn btn-sm btn-outline-secondary">Verwende das Standardmaeßig</button></a>
+            </div>
+            <small class="text-muted"></small>
+        </div>
+        </div>
+    </div>
+</div>
+
+<input type="radio" name="options" id="{{ image.src }}" value="{{ image.name }}"> {{ image.name }} <br>
+
+
+{% endfor %}
+<p><input type="submit" class="btn btn-primary" value="Submit"></p>
+</form>
+</div>
+</section>
+
+{% endblock %}

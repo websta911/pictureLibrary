@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Wenn Sie möchten, können wir Ihnen Ihr Foto in den nächsten Tagen zusenden.</h1>
+        <p class="lead text-muted">Klicken Sie Ihr Foto an und teilen Sie uns Ihre E-mailadresse mit. Wenn alles gut geht, bekommen Sie bald ein E-mail. ;-)</p>
+        
+    </div>
+</section>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            {% for image in images %}
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <a href="subscribe/{{image.name}}" ><img class="card-img-top" src="{{ image.src }}" alt="Card image cap"></a>
+                    <div class="card-body">
+                    <p class="card-text">{{image.name}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                        <a href="subscribe/{{image.name}}"><button type="button" class="btn btn-sm btn-outline-secondary">Das Bild möchte ich</button></a>
+						{% if session.logged_in %}
+                        <a href="PBprint/{{image.name}}"><button type="button" class="btn btn-sm btn-outline-secondary">Drucken</button></a>
+                        {% endif %}
+                        </div>
+                        <small class="text-muted"></small>
+                    </div>
+                    </div>
+                </div>
+            </div>
+                
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+<h1>Photobox Konfiguration</h1>
+<h2>Logo</h2> 
+<!-- <img src="{{ logo_img }}" alt="CurrentLogo"> -->
+<img src="{{ logo_img }}" class="img-fluid" alt="Responsive image">
+<a class="btn btn-success" href="/changeLink/logo_img ">change Logo</a>
+<h2>Background</h2>
+<img src="{{ bg_img }}" class="img-fluid" alt="Responsive image">
+<a class="btn btn-success" href="/changeLink/bg_img">change BG</a>
+</div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+server {
+    listen 80;
+    client_max_body_size	30M;
+    server_tokens off;
+    server_name www.mysite.com mysite.com;
+
+     location / {
+         include uwsgi_params;
+         uwsgi_pass unix:/tmp/picLib.sock;
+     }
+
+     location /static {
+         alias /home/pi/pictureLibrary/static/;
+     }
+
+     ## Only requests to our Host are allowed
+     ##if ($host !~ ^(mysite.com|www.mysite.com)$ ) {
+     ##   return 444;
+     ##}
+}

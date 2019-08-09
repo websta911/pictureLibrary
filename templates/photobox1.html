@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+<section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Photobox Konfiguration</h1>
+          <p class="lead text-muted">Setzte den aktiven Hintergrund und das aktive LOGO</p>
+          <p>
+            <a href="PBupload" class="btn btn-primary my-2">Lade neuen Hintergrund oder Logo hoch</a>
+            
+          </p>
+        </div>
+      </section>
+<h1></h1>
+<!--<script src="/static/jquery-3.3.1.min.js"></script> -->
+
+    <center><h2> Hintergrund</h2></center>
+<div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row">
+            {% for bgimg in bgImages %}
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow">
+                        <img class="card-img-top" src="../{{ bgimg.src }}" alt="Card image cap">
+                        <div class="card-body">
+                            <div class="justify-content-between align-items-top">
+                                <p class="card-text">{{ bgimg.name }}</p>
+                                {% if aBg == bgimg.name %}
+                                <p class="card-text"></p> <h3>Aktueller Hintergrund</h3> </p> 
+                                {% else %}
+                                    <!--<a href="setStandard?asset=bg&img={{bgimg.name}}" class="btn btn-primary">verwende das</a>-->
+                                    <button onclick="location.href='setStandard?asset=bg&img={{bgimg.name}}'" type="button" class="btn btn-primary">
+                                        verwende das</button>
+                                   
+                                    <form action="{{url_for('deleteFile', id=bgimg.name)}}" method="POST" onsubmit="return confirm('You sure?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="asset" value="background">
+                                        <input type="submit" value="Loeschen" class="btn btn-danger">
+                                    </form> 
+                                {% endif %} 
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<center><h2> Logo</h2></center>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            {% for logo in logoImages %}
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow">
+                        <img class="card-img-top" src="../{{ logo.src }}" alt="Card image cap">
+                        <div class="card-body">
+                            <div class="justify-content-between align-items-top">
+								<p class="card-text">{{ logo.name }}</p>
+                                {% if aLogo == logo.name %}
+                                <p class="card-text"><h3> aktives Logo</h3></p>
+                                {% else %}
+                                    <!--<a href="setStandard?asset=logo&img={{logo.name}}" class="btn btn-primary">verwende das</a> {{ logo.name }} <br>-->
+                                    <button onclick="location.href='setStandard?asset=logo&img={{logo.name}}'" type="button" class="btn btn-primary">
+                                            verwende das</button>
+
+                                    <form action="{{url_for('deleteFile', id=logo.name)}}" method="POST" onsubmit="return confirm('You sure?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="asset" value="logo">
+                                        <input type="submit" value="Loeschen" class="btn btn-danger">
+                                    </form> 
+                                
+                                {% endif %} 
+                            
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function submit() {
+       return confirm('Do you really want to submit the form?');
+    }
+    </script>
+
+<!--<script src="/static/jquery-3.3.1.min.js"></script>-->
+
+
+
+
+
+
+{% endblock %}
+{% include "delete_confirm.html" %}

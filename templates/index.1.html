@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+            {% for image in images %}
+                <a class="image" href="{{ image.src }}" style="width: {{ image.width }}px; height: {{ image.height }}px">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image.src }}?w={{ image.width }}&amp;h={{ image.height }}" width="{{ image.width }}" height="{{ image.height }}" />
+                </a>
+                <a href ="subscribe/{{image.name}}">GetIt</a>
+            {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+click==6.7
+Flask==1.0.2
+Flask-SQLAlchemy==2.3.2
+Flask-WTF==0.14.2
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+passlib==1.7.1
+Pillow==5.1.0
+pycups==1.9.73
+SQLAlchemy==1.2.7
+Werkzeug==0.14.1
+WTForms==2.1

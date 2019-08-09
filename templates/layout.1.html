@@ -1,0 +1,38 @@
+{# base template #}
+<!DOCTYPE html>
+<html>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <style>
+body {
+    margin: 0;
+    background-color: #333;
+}
+.image {
+    display: block;
+    margin: 2em auto;
+    background-color: #444;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+img {
+    display: block;
+}
+    </style>
+    
+    <script src="/static/jquery-1.10.2.min.js" charset="utf-8"></script>
+    <script src="/static/jquery.unveil.js" charset="utf-8"></script>
+    <script>
+$(document).ready(function() {
+    $('img').unveil(200);
+});
+    </script>
+
+    
+    
+</head>
+<body>
+    {% block content %}{% endblock %}
+    
+</body>

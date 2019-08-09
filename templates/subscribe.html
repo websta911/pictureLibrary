@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+
+    {% for im in image %}
+    <div class="container">
+           
+        <img src="{{url_for( 'image', filename=im.src) }}" class="img-fluid img-thumbnail"/> 
+        <form method="POST" action="">
+            <div class="form-group">
+              {{ form.imagesrc}}
+            </div>
+            <div class="form-group">
+             Emailadresse: {{ form.email }}
+            </div>
+            <p><input class="btn btn-primary" type="submit" value="Submit">
+          </form>
+    </div>
+        
+   
+    {% endfor %}
+    
+
+    
+    
+{% endblock %}
+

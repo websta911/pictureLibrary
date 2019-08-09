@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+<div class="container">
+<form method="POST" action="">
+    <div class="form-group">
+        <label for="VA">VA</label>
+        <select class="form-control" id="va" name="va">
+            {% for ev in eves %} 
+                {% if ev.eShort == sel %} 
+                    <option value="{{ ev.eShort }}" selected="selected">{{ ev.event }} </option>
+                {% else %}
+                <option value="{{ ev.eShort }}">{{ ev.event }} </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Submit"></p>
+    </div>
+</form>
+</div>
+<div class="container">
+    <ul>
+        {% for sub in subs %}
+        <li>{{sub.imagesrc}} for : {{sub.email}}</li>
+        {% endfor %}
+
+
+    </ul>
+	{% if sel != '' %}
+        <form action="{{url_for('deleteSubscriptions', va=sel)}}" method="POST" onsubmit="return confirm('You sure?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" value="Loeschen" class="btn btn-danger">
+        </form>
+    {% else %}
+        <p> Currently no subscriptions! </p>
+    {% endif %}    
+
+</div>
+{% endblock %}

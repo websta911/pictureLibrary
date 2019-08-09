@@ -1,0 +1,31 @@
+sudo apt-get install nginx uwsgi uwsgi-plugin-python
+
+cd /tmp/
+touch picLib.sock
+sudo chown www-data picLib.sock
+
+cd /etc/nginx/sites-available
+sudo rm default
+
+create picLib config file wie im Ordner nginx/sites-available
+verlinke in sites-enabled
+sudo ln -s /etc/nginx/sites-available/picLib /etc/nginx/sites-enabled/picLib
+
+
+create file picLib.ini in /etc/uwsgi/apps-available wie im gleichnamigen unterordner
+
+link it 
+sudo ln -s /etc/uwsgi/apps-available/picLib.ini /etc/uwsgi/apps-enabled/picLib.ini
+
+sudo service nginx restart
+sudo service uwsgi restart
+
+check ob alles ok 
+
+sudo systemctl status nginx
+sudo systemctl status uwsgi
+
+db und fotoupload ordner schreibbar machen
+
+chmod 777 picLib.db
+chmod 777 images folder

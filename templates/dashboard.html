@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1> Dashboard <small> welcome {{session.username}} </small></h1>
+
+    <a class="btn btn-success" href="/manageUser">Benutzer management</a>
+    <a class="btn btn-success" href="/manageEvents"> Veranstaltung verwalten</a>
+    <a class="btn btn-success" href="/upload ">Bild hochladen</a>
+    <a class="btn btn-success" href="/changePW ">Passwort aendern</a>
+    <a class="btn btn-success" href="/photobox1">Photoboxeinstellungen</a>
+ 
+    
+
+
+
+{% endblock %}

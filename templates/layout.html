@@ -1,0 +1,22 @@
+{# base template #}
+<!DOCTYPE html>
+<html>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+       <link rel="stylesheet" href="/static/bootstrap.min.css">
+       <link rel="stylesheet" href="/static/album.css">
+          
+</head>
+<body>
+    {% include 'includes/_navbar.html' %}
+   
+    <main role="main">
+        {% include 'includes/_messages.html' %}
+        {% block content %}{% endblock %}
+    </main>
+    <script src="/static/jquery-3.2.1.slim.min.js"></script>
+    <script src="/static/bootstrap.min.js"></script>
+    
+</body>

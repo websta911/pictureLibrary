@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+ 
+{% block content %}
+<section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Eventverwaltung</h1>
+          <p class="lead text-muted">manage events</p>
+          <p>
+            <a href="/newEvent" class="btn btn-primary my-2">neues Event</a>
+            
+          </p>
+        </div>
+      </section>
+
+<div class="container">
+    <h2> Events</h2>
+    <table>
+        <tr><th></th><th>Name</th><th>Datum</th><th>Beschreibung</th><th>Kurzform</th><th>Logo</th><th>Hintergrund</th></tr>
+        {% for us in events %}
+        
+            {% if us.eactive == 1 %}
+				{% if us.eLogo.split('/')[-1] == aLogo and us.eBg.split('/')[-1] == aBg %}																		  
+					<tr style="background-color:rgb(109, 243, 161)"><td>
+					<strong>Aktiv</strong></td><td>
+							{% set partactive = 0 %}
+                {% else %}
+                    <tr style="background-color:rgb(238, 241, 41)"><td>
+                    <strong>Nicht korrekt Aktiv</strong></td><td>
+                        {% set partactive = 1 %}
+                {% endif %}
+            {% else %}
+            <tr><td>
+            </td><td>
+            {% endif %}    
+            <h3>{{ us.event }}</h3></td><td>{{us.eDate}}</td><td>{{us.eDesc}}</td><td>{{us.eShort}}</td><td><img class="card-img-top" src="../{{us.eLogo}}"></td><td><IMG class="card-img-top" src=../{{us.eBg}}></td>
+            <td>
+                    {% if us.eactive != 1 %}
+                        <button onclick="location.href='/setEventactive/{{us.id}}'" type="button" class="btn btn-primary">Aktivieren </button></td><td>
+                        <button onclick="location.href='/editEvent/{{us.id}}'" type="button" class="btn btn-primary">Editieren </button>
+                    {% endif %} 
+					{% if partactive == 1 %}
+                        <button onclick="location.href='/setEventactive/{{us.id}}'" type="button" class="btn btn-primary">ReAktivieren </button></td><td>
+                    {% endif %}						
+            </td><td>
+                    {% if us.eactive != 1 %}
+                         <form action="{{url_for('deleteEvent', id=us.id)}}" method="POST" onsubmit="return confirm('You sure? Subscriptions for this event will be deleted too!');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="submit" value="Loeschen" class="btn btn-danger">
+                        </form>
+                    {% endif %} 
+                </td><td>
+
+            </td></tr>
+            
+        {% endfor %}
+    </table>
+</div>
+
+
+{% endblock %}

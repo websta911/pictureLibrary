@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <style>
+body {
+    margin: 0;
+    background-color: #333;
+}
+.image {
+    display: block;
+    margin: 2em auto;
+    background-color: #444;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+}
+    </style>
+    <script src="jquery-1.10.2.min.js" charset="utf-8"></script>
+    <script src="jquery.unveil.js" charset="utf-8"></script>
+    
+</head>
+<body>
+    
+        <a class="image" href="{{ image.src }}" style="width: {{ image.width }}px; height: {{ image.height }}px">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image.src }}?w={{ image.width }}&amp;h={{ image.height }}" width="{{ image.width }}" height="{{ image.height }}" />
+        </a>
+    
+</body>
