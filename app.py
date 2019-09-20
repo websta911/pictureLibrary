@@ -4,7 +4,7 @@ import os, errno
 import cups
 from PIL import Image
 from flask import Flask, Response, request, abort, render_template_string, send_from_directory, render_template,flash, redirect, session, url_for
-import StringIO
+from io import StringIO
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import Form, StringField, validators, SubmitField, HiddenField, PasswordField,TextAreaField,SelectField
 from wtforms.fields.html5 import EmailField, DateField
@@ -12,7 +12,8 @@ from datetime import datetime
 from functools import wraps
 from passlib.hash import sha256_crypt
 from tabledef import *
-from urllib import urlencode, quote, unquote
+#from urllib import urlencode, quote, unquote
+import urllib.parse
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -90,7 +91,7 @@ def index():
             })
 
     return render_template('index.html', **{
-        'images': sorted(images, reverse=True)
+        'images': sorted(images, key=lambda x: x['name'], reverse=True)
     })
 	
 @app.route('/subscribe/<string:filename>', methods=['GET', 'POST'])
@@ -121,8 +122,8 @@ def subscribe(filename):
         imagesrc =  request.form['imagesrc']
         email = request.form['email']
 
-        print imagesrc
-        print email
+        print(imagesrc)
+        print(email)
 
         subscription = Subscription(imagesrc, email, va)
         db.session.add(subscription)
@@ -199,8 +200,8 @@ def uploading():
         print("{} is the file name".format(upload.filename))
         filename = upload.filename
         destination = "/".join([target, filename])
-        print ("Accept incoming file:", filename)
-        print ("Save it to:", destination)
+        print("Accept incoming file:", filename)
+        print("Save it to:", destination)
         upload.save(destination)
 
     # return send_from_directory("images", filename, as_attachment=True)
@@ -333,9 +334,9 @@ def changePW():
         password_candidate = sha256_crypt.encrypt(str(form.password.data))
 
         query = db.session.query(User).filter_by(username = username)
-        print query
+        print(query)
         result = query.first()
-        print result
+        print(result)
         if result:
             password = result.password
 
@@ -354,18 +355,20 @@ def changePW():
 
 def getImgList(asset):
     bgPath = os.path.join(photobpath, 'background')
+    bgThumbsPath = os.path.join(bgPath, 'thumbs')
     bgSL = os.readlink(bgPath + '/_bg')
     logoPath = os.path.join(photobpath, 'logo')
+    logoThumbsPath = os.path.join(logoPath, 'thumbs')
     logoSL = os.readlink(logoPath + '/_logo')
     bgImages = []
-    for root, dirs, files in os.walk(bgPath, topdown=True):
+    for root, dirs, files in os.walk(bgThumbsPath, topdown=True):
         for filename in [os.path.join(root, name) for name in files]:
             if not (filename.endswith('.jpg') or filename.endswith('.png')) :
                 continue
             name = filename.split('/')[-1]
             bgImages.append((filename, name))
     logoImages = []
-    for root, dirs, files in os.walk(logoPath, topdown=True):
+    for root, dirs, files in os.walk(logoThumbsPath, topdown=True):
         for filename in [os.path.join(root, name) for name in files]:
             if not (filename.endswith('.jpg') or filename.endswith('.png')) :
                 continue
@@ -408,9 +411,11 @@ def newEvent():
         db.session.commit()
         flash ('Event wurde angelegt', 'success')
         return redirect(url_for('manageEvents'))
+    form.eBg.choices = getImgList("Bg")
+    form.eLogo.choices = getImgList("Logo")
     return render_template('newEvent.html', form=form)
 
-@app.route('/newEvent1', methods=['GET', 'POST'])
+@app.route('/newEvent1', methods=['GET', 'POST'])#unused 
 @is_logged_in
 def newEvent1():
     
@@ -461,8 +466,8 @@ def newEvent1():
 
 
     return render_template('newEvent.1.html', **{
-        'bgImages': sorted(bgImages),
-        'logoImages': sorted(logoImages),
+        'bgImages': sorted(bgImages, key=lambda x: x['name'] ),
+        'logoImages': sorted(logoImages, key=lambda x: x['name'] ),
         'aBg': bgSL,
         'aLogo':logoSL
     })
@@ -489,7 +494,7 @@ def manageEvents():
 @is_logged_in
 def editEvent(id):
     edEv = db.session.query(Event).filter_by(id=id).first()
-    print datetime.strptime(edEv.eDate,'%Y-%m-%d').strftime('%m/%d/%Y')
+    print(datetime.strptime(edEv.eDate,'%Y-%m-%d').strftime('%m/%d/%Y'))
     #print edEv.eDate.strftime('%Y-%m-%d')
 
     form = EventForm(request.form)
@@ -501,6 +506,9 @@ def editEvent(id):
     form.eLogo.data = edEv.eLogo
 
     eactive = edEv.eactive
+
+    form.eBg.choices = getImgList("Bg")
+    form.eLogo.choices = getImgList("Logo")
 
     if request.method == 'POST':
         edEv.event = request.form['event']
@@ -563,7 +571,7 @@ def setEventactive(id):
     logoname = logo.split('/')[-1]
     
     if bgSL == img:
-        print 'all good bgwise'
+        print('all good bgwise')
     else:
         os.remove(bgPath + '/_bg')
         os.symlink(imgname, bgPath + '/_bg')
@@ -571,7 +579,7 @@ def setEventactive(id):
         bgSL = os.readlink(bgPath + '/_bg')
     
     if logoSL == logo:
-            print 'all good logowise'
+            print('all good logowise')
     else:
         os.remove(logoPath + '/_logo')
         os.symlink(logoname, logoPath + '/_logo')
@@ -592,9 +600,9 @@ def login():
         password_candidate =request.form['password']
 
         query = db.session.query(User).filter_by(username = login_username)
-        print query
+        print(query)
         result = query.first()
-        print result
+        print(result)
         if result:
             password = result.password
 
@@ -633,9 +641,9 @@ def CupsPrinting(BPicture):
 
 class subscribeForm(Form):
     imagesrc = HiddenField('imagesrc')
-    email = EmailField('email', [validators.DataRequired(), validators.Email()])
+    email = EmailField('email', [validators.InputRequired("Please enter your email address."), validators.Email('Not an email address?')])
 
-@app.route('/photobox')
+@app.route('/photobox') ##unused
 def photobox():
     logo_filename = os.path.join(photobpath, 'logo/_logo')
     bg_filename = os.path.join(photobpath, 'background/_bg')
@@ -655,11 +663,11 @@ def photobox1():
     if request.method == 'POST':
         bgchoice = request.form['bgoptions']
         logochoice = request.form['logooptions']
-        print bgchoice
-        print logochoice
+        print(bgchoice)
+        print(logochoice)
 
         if bgSL == bgchoice:
-            print 'all good gbwise'
+            print('all good gbwise')
         else:
             os.remove(bgPath + '/_bg')
             os.symlink(bgchoice, bgPath + '/_bg')
@@ -667,7 +675,7 @@ def photobox1():
             bgSL = os.readlink(bgPath + '/_bg')
 
         if logoSL == logochoice:
-                print 'all good logowise'
+                print('all good logowise')
         else:
             os.remove(logoPath + '/_bg')
             os.symlink(logochoice, logoPath + '/_bg')
@@ -702,8 +710,8 @@ def photobox1():
 
 
     return render_template('photobox1.html', **{
-        'bgImages': sorted(bgImages),
-        'logoImages': sorted(logoImages),
+        'bgImages': sorted(bgImages, key=lambda x: x['name'] ),
+        'logoImages': sorted(logoImages, key=lambda x: x['name']),
         'aBg': bgSL,
         'aLogo':logoSL
     })
@@ -719,13 +727,13 @@ def setStandard():
     
     asset = request.args.get('asset')
     img = request.args.get('img')
-    print asset
-    print img
+    print(asset)
+    print(img)
 
     if asset =='bg':
         
         if bgSL == img:
-            print 'all good gbwise'
+            print('all good gbwise')
         else:
             os.remove(bgPath + '/_bg')
             os.symlink(img, bgPath + '/_bg')
@@ -733,7 +741,7 @@ def setStandard():
             bgSL = os.readlink(bgPath + '/_bg')
     elif asset == 'logo':
         if logoSL == img:
-                print 'all good logowise'
+                print('all good logowise')
         else:
             os.remove(logoPath + '/_logo')
             os.symlink(img, logoPath + '/_logo')
@@ -757,7 +765,7 @@ def PBupload():
     # target = os.path.join(APP_ROOT, 'static/')
         print(target)
         if not os.path.isdir(target):
-            print 'missing target'
+            print('missing target')
         else:
             print("Couldn't create upload directory: {}".format(target))
         #print(request.files.getlist("file"))
@@ -769,8 +777,8 @@ def PBupload():
 			#test 
             thumbdest = "/".join([thumbtarget, filename])
             #endtest
-            print ("Accept incoming file:", filename)
-            print ("Save it to:", destination)
+            print("Accept incoming file:", filename)
+            print("Save it to:", destination)
             upload.save(destination)
 			#test
             image = Image.open(destination)
@@ -790,7 +798,7 @@ def confirmation_required(desc_fn):
             if request.args.get('confirm') != '1':
                 desc = desc_fn()
                 return redirect(url_for('confirm', 
-                    desc=desc, action_url=quote(request.url)))
+                    desc=desc, action_url=urllib.parse.quote(request.url)))
             return f(*args, **kwargs)
         return wrapper
     return inner
@@ -798,7 +806,7 @@ def confirmation_required(desc_fn):
 @app.route('/confirm')
 def confirm():
     desc = request.args['desc']
-    action_url = unquote(request.args['action_url'])
+    action_url = urllib.parse.unquote(request.args['action_url'])
 
     return render_template('_confirm.html', desc=desc, action_url=action_url)
 #not used
@@ -809,7 +817,6 @@ def you_sure():
 @app.route('/deleteFile/<string:id>', methods=['POST'])
 @is_logged_in
 def deleteFile(id):
-    print 'was here'
     asset = request.form['asset']
     
     workdir = os.path.join(photobpath, asset)
@@ -817,7 +824,7 @@ def deleteFile(id):
     thumbdir = os.path.join(workdir, 'thumbs')
     thumbdelete = os.path.join(thumbdir, id)
 
-    print todelete  
+    print(todelete)
     os.remove(todelete)
     os.remove(thumbdelete)
     flash('Deleted {}'.format(id),'success')
@@ -827,27 +834,27 @@ def deleteFile(id):
 
 
 
-@app.route('/changeLink/<link>', methods=['GET', 'POST'])
+@app.route('/changeLink/<link>', methods=['GET', 'POST']) #unused
 def changeLink(link):
     target = link
-    print target
+    print(target)
     if(link == 'bg_img'):
         sPath = os.path.join(photobpath, 'background')
-        print "change link for bg"
+        print("change link for bg")
         bgSL = os.readlink(sPath + '/_bg')
         
     elif(link == 'logo_img'):
         sPath = os.path.join(photobpath, 'logo')
-        print "change link for logo"
+        print("change link for logo")
         logoSL = os.readlink(sPath + '/_logo')
 
 
     if request.method == 'POST':
         choice = request.form['options']
-        print choice
+        print(choice)
 
         setBG = os.path.join(sPath, choice)
-        print setBG
+        print(setBG)
         flash("set background to {choice}")
 
         
@@ -868,11 +875,11 @@ def changeLink(link):
                 })
 
         return render_template('changeLink.html', **{
-            'images': sorted(images, reverse=True)
+            'images': sorted(images, key=lambda x: x['name'], reverse=True)
         })
     return redirect(url_for('photobox'))
 
-@app.route('/setLink')
+@app.route('/setLink') #unused
 def setLink():
      return redirect(url_for('photobox'))
 
@@ -880,7 +887,7 @@ def setLink():
 def symlink_force(target, link_name):
     try:
         os.symlink(target, link_name)
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.EEXIST:
             os.remove(link_name)
             os.symlink(target, link_name)
