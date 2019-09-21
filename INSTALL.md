@@ -1,7 +1,7 @@
 
 Install the Picture Library
 
-
+```
 Sudo Pip install virtualenv
 virtualenv -p python3 --system-site-packages picLib
 . piclLib/bin/activate
@@ -11,11 +11,12 @@ pip install flask
 pip install flask_sqlalchemy
 pip install flask-wtf
 pip install passlib
-
+```
 
 Creates Database 
+```
 python createTables.py
-
+```
 Make Autostart as Webapplication using uswgi and nginx
 
 https://askubuntu.com/questions/927881/running-a-flask-app-on-startup-with-systemd
@@ -37,6 +38,7 @@ sudo rm default
 sudo touch piclib
 sudo vim picLib
 #### content of picLib
+```
 server {
         listen 80;
         server_tokens off;
@@ -57,6 +59,7 @@ server {
     ##    return 444;
     ## }
 }
+```
 #####content end
 
 
@@ -65,6 +68,7 @@ sudo ln -s /etc/nginx/sites-available/picLib /etc/nginx/sites-enabled/picLib
 sudo vim /etc/uwsgi/apps-available/picLib.ini
 
 ## content of piclib.ini
+```
 [uwsgi]
 vhost = true
 socket = /tmp/picLib.sock
@@ -73,7 +77,7 @@ chdir = /home/pi/pictureLibrary
 module = app
 callable = app
 plugin = python3
-
+```
 ### end of content
 
 
@@ -85,19 +89,22 @@ sudo service nginx restart
 sudo service uwsgi restart
 
 create Folder for Photobooth Backgrounds and Logos
-
+```
 cd ~
 mkdir background
+Mkdir background/thumbs
 chown +777 background
 mkdir logo
+Mkdir logo/thumbs
 chown +777 logo
 cd background 
+```
 
 ## Add one Background and Logo to the folders and create the _bg or _logo symlink  
-
+```
 ln -s /home/pi/background/bgxxx.jpg _bg
 ln -s /home/pi/logo/logoxxx.jpg _logo
-
+```
 ## this is, if you are using those symlinks as logo/background on  the photobooth changeable from webinterface
 
 ## link to where ever your background an logo folder are located (I moved them, before they where in the photobooth location, too lazy to clean that up)
