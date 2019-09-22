@@ -7,6 +7,8 @@ So I made an website where all the pictures are displayed and you can enter your
 Since it went really well I integrated the background and logo settings of the first version of the Photobooth when there was no settings gui.
 
 ### contains currently:
+- display all pictures in a folder
+- subscribe/order specific pictures by providing email address
 - some form of event 
 - user management
 - upload of background and logo files
