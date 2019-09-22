@@ -3,18 +3,32 @@ webpage to display pictures taken by a photobooth, where people can subscribe to
 
 But it is a little bit more. I built this initially for the first version of mr. Reuterbals photobooth. I wanted the attendees of the wedding to be able to get their pictures also in a digital version.
 I did not want the people to block the Photobooth while entering their email address.
- which had no settings gui.
-So I incorporated it in this Webinterface.
-I still kept it though because of the ability to upload and choose the logos and background and not to have to remember what the file was called.
-There is also some kind of Event attempt in there which is not that awesome but since the subscriptions are added in the database with the active event is good for sorting through that and you can stage the background and logo for the event and activate it.
-The logo and background selection is based on symlinks in the background or logos folder and the Photobooth is using those symlinks as background and logo.
+So I made an website where all the pictures are displayed and you can enter your email address to get the picture sent some time after the wedding.
+Since it went really well I integrated the background and logo settings of the first version of the Photobooth when there was no settings gui.
+
+### contains currently:
+- some form of event 
+- user management
+- upload of background and logo files
+- manage backgrounds and logos for photobooth
+- upload and print of random pictures
 
 
 
-Some kind of explanation:
+### Some kind of explanation:
+
+I am not a developer, so the quality of the code is not that great.
+Everything is in app.py there are even some unused functions in there where I tried some things.
+In the first few lines are some folder settings.
+Some of them are based on symlinks in the project folder.
 
 There are a few symlinks involved which need to be present to be able to start it.
-- Photob: points to the location where the background and the logo folder are located 
+- photob: points to the location where the background and the logo folder are located 
 - _logo: the chosen logo in the logo folder
-- _bg: the chosen background in the background folder
+- _bg: the chosen background in the background folder.
+
+I am planning of adding to that and eventually clean some things up but that will not happen in the near future.
+
+One feature I really would like to create is a layoutcreator for the photobooth. Where you can create layouts by placing picture and logo placeholder. But I have no idea how to do that, how and in what form to save the layout and the booth needs the corresponding function to use that.
+So this will take a long time to get there if ever.
 
