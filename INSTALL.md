@@ -1,5 +1,5 @@
 
-# Install the Picture Library
+# Installation of the Picture Library
 
 ```
 Sudo Pip install virtualenv
