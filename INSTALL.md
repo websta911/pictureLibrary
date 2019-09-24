@@ -36,12 +36,22 @@ Since we are creating a webinterface it makes sense to put that in /var/www
 ```
 sudo mkdir -p /var/www/pictureLibrary
 sudo chown -R pi /var/www/pictureLibrary/
+
 ```
+
+To get the code in there I have no idea how to do that properly but you could try something like that:
+clone the repository and copy the content of the folder into the www/picturelibrary location you created before.
+
+```
+cd ~ 
+git clone https://github.com/websta911/pictureLibrary
+cp -r pictureLibrary/* /var/www/pictureLibrary/.
+```
+
 Create Virtualenvironment and install python modules
 
 ```
 cd /var/www/pictureLibrary
-
 virtualenv -p python3 --system-site-packages .venv
 source .venv/bin/activate
 pip install pycups Pillow flask flask_sqlalchemy flask-wtf passlib
