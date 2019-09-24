@@ -9,15 +9,19 @@ sudo apt install nginx uwsgi uwsgi-plugin-python3
 sudo Pip install virtualenv
 ```
 
-create Folder for Photobooth backgrounds and logos mine are located in /home/pi aka. ~ 
+create Folder for photobooth backgrounds and logos and an upload folder mine are located in /home/pi aka. ~ 
 ```
 cd ~
+mkdir Pictures/upload
+chmod 777 Pictures/upload
 mkdir background
-Mkdir background/thumbs
-chown +777 background
+mkdir background/thumbs
+chmod 777 background
+chmod 777 background/*
 mkdir logo
-Mkdir logo/thumbs
-chown +777 logo
+mkdir logo/thumbs
+chmod 777 logo
+chmod 777 logo/*
 cd background 
 ```
 

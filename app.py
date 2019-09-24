@@ -12,7 +12,6 @@ from datetime import datetime
 from functools import wraps
 from passlib.hash import sha256_crypt
 from tabledef import *
-#from urllib import urlencode, quote, unquote
 import urllib.parse
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -30,12 +29,14 @@ HEIGHT = 350
 
 ## Config ###
 
-##Bilderpfad
+##Picture Path photobooth
 picture_basename = datetime.now().strftime("./Pictures/%Y-%m-%d")
-path = './bilder'
 path = picture_basename
+## uploads
+upload_basename = './Pictures/uploads'
+## photobooth assets
 photobpath = './photob'
-## Veranstaltung
+## Event
 aEvconf = db.session.query(Event).filter_by(eactive=1).first()
 if aEvconf:
     va = aEvconf.eShort
@@ -187,8 +188,8 @@ def upload():
 
 @app.route("/uploading", methods=["POST"])
 def uploading():
-    target = os.path.join(basedir, 'images/')
-    # target = os.path.join(APP_ROOT, 'static/')
+    #target = os.path.join(basedir, 'images/')
+    target = upload_basename
     print(target)
     if not os.path.isdir(target):
             os.mkdir(target)
@@ -210,13 +211,14 @@ def uploading():
 @app.route('/uploading/<filename>')
 @is_logged_in
 def send_image(filename):
-    return send_from_directory("images", filename)
+    return send_from_directory(upload_basename, filename)
 
 
 @app.route('/print/<string:filename>')
 @is_logged_in
 def cups_print(filename):
-    target = os.path.join(basedir, 'images/')
+    #target = os.path.join(basedir, 'images/')
+    target = upload_basename
     fullPath = "/".join([target, filename])
     print("fullpath:", fullPath)
     CupsPrinting(fullPath)
@@ -356,10 +358,8 @@ def changePW():
 def getImgList(asset):
     bgPath = os.path.join(photobpath, 'background')
     bgThumbsPath = os.path.join(bgPath, 'thumbs')
-    bgSL = os.readlink(bgPath + '/_bg')
     logoPath = os.path.join(photobpath, 'logo')
     logoThumbsPath = os.path.join(logoPath, 'thumbs')
-    logoSL = os.readlink(logoPath + '/_logo')
     bgImages = []
     for root, dirs, files in os.walk(bgThumbsPath, topdown=True):
         for filename in [os.path.join(root, name) for name in files]:
@@ -759,13 +759,17 @@ def PBupload():
     if request.method == 'POST':
         asset = request.form['Asset']    
         target = os.path.join(photobpath, asset)
-		#test thumbsUPload create thumbs folder in ~/background and logo  this should create an thumbnail to be displayed on photob1 (speed)
+		# thumbsUPload create thumbs folder in ~/background and logo  this should create an thumbnail to be displayed on photob1 (speed)
         thumbtarget = os.path.join(target, 'thumbs')
-        #endtest
-    # target = os.path.join(APP_ROOT, 'static/')
         print(target)
         if not os.path.isdir(target):
             print('missing target')
+            os.mkdir(target)
+        else:
+            print("Couldn't create upload directory: {}".format(target))
+        if not os.path.isdir(thumbtarget):
+            print('missing thumbtarget')
+            os.mkdir(thumbtarget)
         else:
             print("Couldn't create upload directory: {}".format(target))
         #print(request.files.getlist("file"))
@@ -774,17 +778,14 @@ def PBupload():
             print("{} is the file name".format(upload.filename))
             filename = upload.filename
             destination = "/".join([target, filename])
-			#test 
             thumbdest = "/".join([thumbtarget, filename])
-            #endtest
             print("Accept incoming file:", filename)
             print("Save it to:", destination)
             upload.save(destination)
-			#test
+            # save Thumbnail
             image = Image.open(destination)
             image.thumbnail((360, 360), Image.ANTIALIAS)
             image.save(thumbdest)
-            #endtest
             flash('Uploaded to {}'.format(destination),'success')
             return redirect(url_for('photobox1'))
     else:
