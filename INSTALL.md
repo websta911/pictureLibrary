@@ -55,6 +55,7 @@ cd /var/www/pictureLibrary
 virtualenv -p python3 --system-site-packages .venv
 source .venv/bin/activate
 pip install pycups Pillow flask flask_sqlalchemy flask-wtf passlib
+deactivate
 ```
 
 Create link "photob" to where ever your background an logo folders are located and "Pictures" to where the Pictures of the Photobox are located. Expected to find folders with foldername in form "%Y-%m-%d"
