@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Date, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from passlib.hash import sha256_crypt
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -68,7 +69,7 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-user = User("admin", "password")
+user = User("admin", sha256_crypt.encrypt("password"))
 session.add(user)
 
 event = Event("default", "1.1.2019", "Default Event", "PBlogo.png", "PBlogo.png", "default", 1)

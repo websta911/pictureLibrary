@@ -1,15 +1,15 @@
 
 # Installation of the Picture Library
 
-## Pre reqs
-
 ```
 sudo apt install libcups2-dev cups
-sudo apt install nginx uwsgi uwsgi-plugin-python3
 sudo Pip install virtualenv
+virtualenv -p python3 --system-site-packages picLib
+source piclLib/bin/activate
+pip install pycups Pillow flask flask_sqlalchemy flask-wtf passlib
 ```
 
-create Folder for Photobooth backgrounds and logos mine are located in /home/pi aka. ~ 
+create Folder for Photobooth Backgrounds and Logos
 ```
 cd ~
 mkdir background
@@ -26,30 +26,11 @@ Add one Background and Logo to the folders and create the _bg or _logo symlink
 ln -s /home/pi/background/bgxxx.jpg _bg
 ln -s /home/pi/logo/logoxxx.jpg _logo
 ```
-this symlinks are what is changed later in the webinterface
+this symlinks are what is changed in the webinterface
 
-## get the picturelibrary code
-
-
-Since we are creating a webinterface it makes sense to put that in /var/www 
-
+Create link photob to where ever your background an logo folders are located and Pictures to where the Pictures of the Photobox are located. Expected to find folders with foldername in form "%Y-%m-%d"
 ```
-sudo mkdir -p /var/www/pictureLibrary
-sudo chown -R pi /var/www/pictureLibrary/
-```
-Create Virtualenvironment and install python modules
-
-```
-cd /var/www/pictureLibrary
-
-virtualenv -p python3 --system-site-packages .venv
-source .venv/bin/activate
-pip install pycups Pillow flask flask_sqlalchemy flask-wtf passlib
-```
-
-Create link "photob" to where ever your background an logo folders are located and "Pictures" to where the Pictures of the Photobox are located. Expected to find folders with foldername in form "%Y-%m-%d"
-```
-cd /var/www/pictureLibrary
+cd ~/pictureLibrary
 ln -s /home/pi photob
 ln -s /home/pi Pictures Pictures
 ```
@@ -60,32 +41,34 @@ python createTables.py
 chmod 777 picLib.db
 ```
 
-
 ## Make Autostart as Webapplication using uswgi and nginx
 
 Source:
 ```
 https://stackoverflow.com/questions/24941791/starting-flask-server-in-background
 ```
-create a socket file for nginx to communicate with uwsgi
+
+Install uswgi and nginx
+Configure both
+
+
 ```
+sudo mkdir -p /var/www/pictureLibrary
+sudo chown -R pi /var/www/pictureLibrary/
+
+sudo apt install nginx uwsgi uwsgi-plugin-python3
 cd /tmp
 touch picLib.sock
+
 sudo chown www-data picLib.sock
-```
-Add configuration for nginx and uwsgi.
-Delete default configuration for nginx and the link in sites-enabled if exists
-```
 cd /etc/nginx/sites-available/
 sudo rm default
-sudo rm /etc/nginx/sites-enabled/default
-```
-Create a configuration file picLib ... 
-```
+
+sudo touch piclib
 sudo vim picLib
 ```
 
-with the following content:
+content of picLib
 
 ```
 server {
@@ -100,7 +83,7 @@ server {
      }
 
      location /static {
-         alias /var/www/pictureLibrary/static/;
+         alias /home/pi/pictureLibrary/static/;
      }
 
      ## Only requests to our Host are allowed
@@ -123,8 +106,8 @@ content of piclib.ini
 [uwsgi]
 vhost = true
 socket = /tmp/picLib.sock
-venv = /var/www/pictureLibrary/.venv
-chdir = /var/www/pictureLibrary
+venv = /home/pi/pictureLibrary/picLib
+chdir = /home/pi/pictureLibrary
 module = app
 callable = app
 plugin = python3
