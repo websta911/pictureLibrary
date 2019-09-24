@@ -7,14 +7,14 @@ So I made an website where all the pictures are displayed and you can enter your
 Since it went really well I integrated the background and logo settings of the first version of the Photobooth when there was no settings gui.
 
 ### contains currently:
-- display all pictures in a folder
+- display all pictures in folder Pictures/%Y-%m-%d 
 - subscribe/order specific pictures by providing email address
-- some form of event 
 - user management
-- upload of background and logo files
-- manage backgrounds and logos for photobooth
-- upload and print of random pictures
-
+- some kind of event, used for subscription
+- photobooth related
+  - upload of background and logo files 
+  - manage backgrounds and logos for photobooth
+  - upload and print of random pictures
 
 
 ### Some kind of explanation:
@@ -26,6 +26,7 @@ Some of them are based on symlinks in the project folder.
 
 There are a few symlinks involved which need to be present to be able to start it.
 - photob: points to the location where the background and the logo folder are located 
+- Pictures: points to the container which holds the %Y-%m-$d folders the photobooth saves its pictures.
 - _logo: the chosen logo in the logo folder
 - _bg: the chosen background in the background folder.
 
