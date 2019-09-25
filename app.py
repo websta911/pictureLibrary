@@ -13,6 +13,8 @@ from functools import wraps
 from passlib.hash import sha256_crypt
 from tabledef import *
 import urllib.parse
+import string
+import secrets
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -317,12 +319,12 @@ def pwgen(length):
     if not isinstance(length, int)or length < 4:
         error = 'Passwort zur kurz'
     
-    chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz!-_"
-    from os import urandom
-    return "".join(chars[ord(c) % len(chars)] for c in urandom(length))
-    #alphabet = string.ascii_letters + string.digits
-    #password = ''.join(secrets.choice(alphabet) for i in range(6))
-    #return password
+    #chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz!-_"
+    #from os import urandom
+    #return "".join(chars[ord(c) % len(chars)] for c in urandom(length))
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(length))
+    return password
 
 
 @app.route('/changePW', methods=['POST','GET'])
@@ -373,7 +375,7 @@ def getImgList(asset):
             if not (filename.endswith('.jpg') or filename.endswith('.png')) :
                 continue
             name = filename.split('/')[-1]
-            logoImages.append((filename,name))
+            logoImages.append((filename, name))
     if asset == 'Bg':
         return bgImages
     elif asset == 'Logo':

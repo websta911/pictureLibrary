@@ -40,7 +40,7 @@ Since we are creating a webinterface it makes sense to put that in /var/www
 ```
 sudo mkdir -p /var/www/pictureLibrary
 sudo chown -R pi /var/www/pictureLibrary/
-
+chmod 777 .
 ```
 
 To get the code in there I have no idea how to do that properly but you could try something like that:
