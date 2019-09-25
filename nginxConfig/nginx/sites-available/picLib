@@ -10,7 +10,7 @@ server {
      }
 
      location /static {
-         alias /home/pi/pictureLibrary/static/;
+         alias /var/www/pictureLibrary/static/;
      }
 
      ## Only requests to our Host are allowed
