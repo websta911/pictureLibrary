@@ -18,6 +18,11 @@ Since developing went really well I integrated the background and logo settings 
   - upload and print of random pictures
 
 
+![Screenshot](screenshots/picturelibrary1.png)
+![Screenshot](screenshots/dashboard.png)
+![Screenshot](screenshots/eventmgmt.png)
+![Screenshot](screenshots/bgLogoManagement.png)
+
 ### Some kind of explanation:
 
 I am not a developer, so the quality of the code is not that great.
