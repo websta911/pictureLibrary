@@ -4,7 +4,8 @@ webpage to display pictures taken by a photobooth, where people can subscribe to
 But it is a little bit more. I built this initially for the first version of mr. Reuterbals photobooth. I wanted the attendees of the wedding to be able to get their pictures also in a digital version.
 I did not want the people to block the Photobooth while entering their email address.
 So I made an website where all the pictures are displayed and you can enter your email address to get the picture sent some time after the wedding.
-Since it went really well I integrated the background and logo settings of the first version of the Photobooth when there was no settings gui.
+Since developing went really well I integrated the background and logo settings of the first version of the Photobooth when there was no settings gui.
+
 
 ### contains currently:
 - display all pictures in folder Pictures/%Y-%m-%d 
