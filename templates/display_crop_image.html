@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+ 
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Uploaded</h1>
+        <img id="image" src=" {{url_for('send_image', filename=image_name)}}" class="img-fluid" alt="Responsive image">
+        <p></p>
+
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a href="print/{{image_name}}"><button type="button" class="btn btn-sm btn-outline-secondary">Drucken</button></a>
+                <button id="cropbtn" type="button" class="btn btn-sm btn-outline-secondary">Crop</button>
+            </div>
+            <small class="text-muted"></small>
+        </div>
+                    
+       <div id="result"></div>
+        
+    </div>
+</section>
+<script src="/static/cropper/cropper.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var image = document.querySelector('#image');
+      var button = document.getElementById('cropbtn');
+      var result = document.getElementById('result');
+      var img_name = new URL(document.getElementById("image").src).pathname.split("/").pop()
+      if(image.width > image.height){ 
+        var aspectratio = 3 / 2;
+      }else{
+        var aspectratio = 2 / 3;
+      }
+      
+      var cropper = new Cropper(image, {
+        viewMode: 1,
+        zoomable: false,
+        aspectRatio: aspectratio
+        
+
+      }); 
+           
+      button.onclick = function () {
+        result.innerHTML = img_name;
+        //result.appendChild(cropper.getCroppedCanvas());
+        
+        var blob = cropper.getCroppedCanvas().toBlob((blob) => {
+        const formData = new FormData();
+      
+        // Pass the image file name as the third parameter if necessary.
+        formData.append('image', blob, img_name);
+        
+        //var request = new XMLHttpRequest();
+      //request.open("POST", "/uploadCropped");
+      //request.send(formData);
+        
+      
+        // Use jQuery.ajax method for example
+        $.ajax('/uploadCropped', {
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success() {
+            console.log('Upload success');
+          },
+          error() {
+            console.log('Upload error');
+          },
+        });
+      }, 'image/png' )
+      
+      window.setTimeout(function(){
+
+        // Move to a new location or you can do something else
+        window.location.href = ("/print/cropped_"+img_name);
+
+    }, 5000);
+      
+          
+      };
+    });
+  </script>
+
+{% endblock %}

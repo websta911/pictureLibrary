@@ -7,7 +7,11 @@
     <meta charset="utf-8" />
        <link rel="stylesheet" href="/static/bootstrap.min.css">
        <link rel="stylesheet" href="/static/album.css">
-          
+       <link rel="stylesheet" href="/static/cropper/cropper.css">
+       <style>img {
+          max-width: 100%;
+        }
+      </style>   
 </head>
 <body>
     {% include 'includes/_navbar.html' %}
@@ -17,6 +21,7 @@
         {% block content %}{% endblock %}
     </main>
     <script src="/static/jquery-3.2.1.slim.min.js"></script>
+    <script src="/static/jquery-3.3.1.min.js"></script>
     <script src="/static/bootstrap.min.js"></script>
     
 </body>
