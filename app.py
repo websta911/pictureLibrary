@@ -12,9 +12,8 @@ from datetime import datetime
 from functools import wraps
 from passlib.hash import sha256_crypt
 from tabledef import *
+#from urllib import urlencode, quote, unquote
 import urllib.parse
-import string
-import secrets
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -31,14 +30,12 @@ HEIGHT = 350
 
 ## Config ###
 
-##Picture Path photobooth
+##Bilderpfad
 picture_basename = datetime.now().strftime("./Pictures/%Y-%m-%d")
+path = './bilder'
 path = picture_basename
-## uploads
-upload_basename = './Pictures/uploads'
-## photobooth assets
 photobpath = './photob'
-## Event
+## Veranstaltung
 aEvconf = db.session.query(Event).filter_by(eactive=1).first()
 if aEvconf:
     va = aEvconf.eShort
@@ -94,7 +91,7 @@ def index():
             })
 
     return render_template('index.html', **{
-        'images': sorted(images, key=lambda x: x['name'], reverse=True)
+        'images': sorted(images,key=lambda x: x['name'], reverse=True)
     })
 	
 @app.route('/subscribe/<string:filename>', methods=['GET', 'POST'])
@@ -190,8 +187,8 @@ def upload():
 
 @app.route("/uploading", methods=["POST"])
 def uploading():
-    #target = os.path.join(basedir, 'images/')
-    target = upload_basename
+    target = os.path.join(basedir, 'images/')
+    # target = os.path.join(APP_ROOT, 'static/')
     print(target)
     if not os.path.isdir(target):
             os.mkdir(target)
@@ -203,24 +200,47 @@ def uploading():
         print("{} is the file name".format(upload.filename))
         filename = upload.filename
         destination = "/".join([target, filename])
-        print("Accept incoming file:", filename)
-        print("Save it to:", destination)
+        print ("Accept incoming file:", filename)
+        print ("Save it to:", destination)
         upload.save(destination)
 
     # return send_from_directory("images", filename, as_attachment=True)
-    return render_template("complete_display_image.html", image_name=filename)
+    #return render_template("complete_display_image.html", image_name=filename) # the origial one No Cropper
+    return render_template("display_crop_image.html", image_name=filename)
+    
+@app.route("/uploadCropped", methods=["POST"])
+def uploadCropped():
+    target = os.path.join(basedir, 'images/')
+    # target = os.path.join(APP_ROOT, 'static/')
+    print(target)
+    if not os.path.isdir(target):
+            os.mkdir(target)
+    else:
+        print("Couldn't create upload directory: {}".format(target))
+    print(request)
+    upload = request.files['image']
+    #print(upload)
+    print("{} is the file name".format(upload.filename))
+    filename = 'cropped_' + upload.filename
+    destination = "/".join([target, filename])
+    print ("Accept incoming file:", filename)
+    print ("Save it to:", destination)
+    upload.save(destination)
+
+    # return send_from_directory("images", filename, as_attachment=True)
+    return render_template("complete_display_image.html", image_name=filename) # the origial one No Cropper
+    #return render_template("display_crop_image.html", image_name=filename)
 
 @app.route('/uploading/<filename>')
 @is_logged_in
 def send_image(filename):
-    return send_from_directory(upload_basename, filename)
-
+    return send_from_directory("images", filename)
+    
 
 @app.route('/print/<string:filename>')
 @is_logged_in
 def cups_print(filename):
-    #target = os.path.join(basedir, 'images/')
-    target = upload_basename
+    target = os.path.join(basedir, 'images/')
     fullPath = "/".join([target, filename])
     print("fullpath:", fullPath)
     CupsPrinting(fullPath)
@@ -319,12 +339,12 @@ def pwgen(length):
     if not isinstance(length, int)or length < 4:
         error = 'Passwort zur kurz'
     
-    #chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz!-_"
-    #from os import urandom
-    #return "".join(chars[ord(c) % len(chars)] for c in urandom(length))
-    alphabet = string.ascii_letters + string.digits
-    password = ''.join(secrets.choice(alphabet) for i in range(length))
-    return password
+    chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz!-_"
+    from os import urandom
+    return "".join(chars[ord(c) % len(chars)] for c in urandom(length))
+    #alphabet = string.ascii_letters + string.digits
+    #password = ''.join(secrets.choice(alphabet) for i in range(6))
+    #return password
 
 
 @app.route('/changePW', methods=['POST','GET'])
@@ -340,7 +360,7 @@ def changePW():
         query = db.session.query(User).filter_by(username = username)
         print(query)
         result = query.first()
-        print(result)
+        print( result)
         if result:
             password = result.password
 
@@ -360,8 +380,10 @@ def changePW():
 def getImgList(asset):
     bgPath = os.path.join(photobpath, 'background')
     bgThumbsPath = os.path.join(bgPath, 'thumbs')
+    bgSL = os.readlink(bgPath + '/_bg')
     logoPath = os.path.join(photobpath, 'logo')
     logoThumbsPath = os.path.join(logoPath, 'thumbs')
+    logoSL = os.readlink(logoPath + '/_logo')
     bgImages = []
     for root, dirs, files in os.walk(bgThumbsPath, topdown=True):
         for filename in [os.path.join(root, name) for name in files]:
@@ -375,7 +397,7 @@ def getImgList(asset):
             if not (filename.endswith('.jpg') or filename.endswith('.png')) :
                 continue
             name = filename.split('/')[-1]
-            logoImages.append((filename, name))
+            logoImages.append((filename,name))
     if asset == 'Bg':
         return bgImages
     elif asset == 'Logo':
@@ -417,7 +439,7 @@ def newEvent():
     form.eLogo.choices = getImgList("Logo")
     return render_template('newEvent.html', form=form)
 
-@app.route('/newEvent1', methods=['GET', 'POST'])#unused 
+@app.route('/newEvent1', methods=['GET', 'POST'])
 @is_logged_in
 def newEvent1():
     
@@ -468,8 +490,8 @@ def newEvent1():
 
 
     return render_template('newEvent.1.html', **{
-        'bgImages': sorted(bgImages, key=lambda x: x['name'] ),
-        'logoImages': sorted(logoImages, key=lambda x: x['name'] ),
+        'bgImages': sorted(bgImages,key=lambda x: x['name'] ),
+        'logoImages': sorted(logoImages,key=lambda x: x['name'] ),
         'aBg': bgSL,
         'aLogo':logoSL
     })
@@ -496,7 +518,7 @@ def manageEvents():
 @is_logged_in
 def editEvent(id):
     edEv = db.session.query(Event).filter_by(id=id).first()
-    print(datetime.strptime(edEv.eDate,'%Y-%m-%d').strftime('%m/%d/%Y'))
+    print (datetime.strptime(edEv.eDate,'%Y-%m-%d').strftime('%m/%d/%Y'))
     #print edEv.eDate.strftime('%Y-%m-%d')
 
     form = EventForm(request.form)
@@ -508,7 +530,6 @@ def editEvent(id):
     form.eLogo.data = edEv.eLogo
 
     eactive = edEv.eactive
-
     form.eBg.choices = getImgList("Bg")
     form.eLogo.choices = getImgList("Logo")
 
@@ -573,7 +594,7 @@ def setEventactive(id):
     logoname = logo.split('/')[-1]
     
     if bgSL == img:
-        print('all good bgwise')
+        print( 'all good bgwise')
     else:
         os.remove(bgPath + '/_bg')
         os.symlink(imgname, bgPath + '/_bg')
@@ -581,7 +602,7 @@ def setEventactive(id):
         bgSL = os.readlink(bgPath + '/_bg')
     
     if logoSL == logo:
-            print('all good logowise')
+            print( 'all good logowise')
     else:
         os.remove(logoPath + '/_logo')
         os.symlink(logoname, logoPath + '/_logo')
@@ -643,9 +664,10 @@ def CupsPrinting(BPicture):
 
 class subscribeForm(Form):
     imagesrc = HiddenField('imagesrc')
-    email = EmailField('email', [validators.InputRequired("Please enter your email address."), validators.Email('Not an email address?')])
+    #email = EmailField('email', [validators.DataRequired(), validators.Email()])
+    email = EmailField('email', [validators.InputRequired("Please enter your email address."), validators.Email('Not an email address.')])
 
-@app.route('/photobox') ##unused
+@app.route('/photobox')
 def photobox():
     logo_filename = os.path.join(photobpath, 'logo/_logo')
     bg_filename = os.path.join(photobpath, 'background/_bg')
@@ -712,7 +734,7 @@ def photobox1():
 
 
     return render_template('photobox1.html', **{
-        'bgImages': sorted(bgImages, key=lambda x: x['name'] ),
+        'bgImages': sorted(bgImages,key=lambda x: x['name'] ),
         'logoImages': sorted(logoImages, key=lambda x: x['name']),
         'aBg': bgSL,
         'aLogo':logoSL
@@ -761,17 +783,13 @@ def PBupload():
     if request.method == 'POST':
         asset = request.form['Asset']    
         target = os.path.join(photobpath, asset)
-		# thumbsUPload create thumbs folder in ~/background and logo  this should create an thumbnail to be displayed on photob1 (speed)
+		#test thumbsUPload create thumbs folder in ~/background and logo  this should create an thumbnail to be displayed on photob1 (speed)
         thumbtarget = os.path.join(target, 'thumbs')
+        #endtest
+    # target = os.path.join(APP_ROOT, 'static/')
         print(target)
         if not os.path.isdir(target):
             print('missing target')
-            os.mkdir(target)
-        else:
-            print("Couldn't create upload directory: {}".format(target))
-        if not os.path.isdir(thumbtarget):
-            print('missing thumbtarget')
-            os.mkdir(thumbtarget)
         else:
             print("Couldn't create upload directory: {}".format(target))
         #print(request.files.getlist("file"))
@@ -780,14 +798,17 @@ def PBupload():
             print("{} is the file name".format(upload.filename))
             filename = upload.filename
             destination = "/".join([target, filename])
+			#test 
             thumbdest = "/".join([thumbtarget, filename])
-            print("Accept incoming file:", filename)
-            print("Save it to:", destination)
+            #endtest
+            print ("Accept incoming file:", filename)
+            print ("Save it to:", destination)
             upload.save(destination)
-            # save Thumbnail
+			#test
             image = Image.open(destination)
             image.thumbnail((360, 360), Image.ANTIALIAS)
             image.save(thumbdest)
+            #endtest
             flash('Uploaded to {}'.format(destination),'success')
             return redirect(url_for('photobox1'))
     else:
@@ -827,7 +848,6 @@ def deleteFile(id):
     thumbdir = os.path.join(workdir, 'thumbs')
     thumbdelete = os.path.join(thumbdir, id)
 
-    print(todelete)
     os.remove(todelete)
     os.remove(thumbdelete)
     flash('Deleted {}'.format(id),'success')
@@ -837,7 +857,7 @@ def deleteFile(id):
 
 
 
-@app.route('/changeLink/<link>', methods=['GET', 'POST']) #unused
+@app.route('/changeLink/<link>', methods=['GET', 'POST'])
 def changeLink(link):
     target = link
     print(target)
@@ -848,7 +868,7 @@ def changeLink(link):
         
     elif(link == 'logo_img'):
         sPath = os.path.join(photobpath, 'logo')
-        print("change link for logo")
+        print( "change link for logo")
         logoSL = os.readlink(sPath + '/_logo')
 
 
@@ -857,7 +877,7 @@ def changeLink(link):
         print(choice)
 
         setBG = os.path.join(sPath, choice)
-        print(setBG)
+        print( setBG)
         flash("set background to {choice}")
 
         
@@ -878,11 +898,11 @@ def changeLink(link):
                 })
 
         return render_template('changeLink.html', **{
-            'images': sorted(images, key=lambda x: x['name'], reverse=True)
+            'images': sorted(images,key=lambda x: x['name'], reverse=True)
         })
     return redirect(url_for('photobox'))
 
-@app.route('/setLink') #unused
+@app.route('/setLink')
 def setLink():
      return redirect(url_for('photobox'))
 
